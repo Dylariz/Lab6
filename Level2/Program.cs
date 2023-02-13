@@ -1,18 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 
+namespace Level2
+{
+    internal static class Program
+    {
+        public static void Main(string[] args)
+        {
+            Number2.Program.Start();
+        }
+    }
+}
+
 namespace Number2
 {
     /// <summary>
-    /// 2-й уровень 6-й лабы
     /// Группа учащихся подготовительного отделения сдает выпускные экзамены по трем предметам (математика, физика, русский язык).
     /// Учащийся, получивший «2», сразу отчисляется. Вывести список учащихся, успешно сдавших экзамены, в порядке убывания полученного
     /// ими среднего балла по результатам трех экзаменов.
     /// </summary>
-    internal class Program
+    internal static class Program
     {
         static Random _random = new Random();
-        public static void Main(string[] args)
+
+        public static void Start()
         {
             int n = 20;
             Group group = new Group();
@@ -41,7 +52,8 @@ namespace Number2
             };
             for (int i = 0; i < n; i++)
             {
-                group.AddStudent(new Student(names[_random.Next(0, names.Length)], _random.Next(2, 6), _random.Next(2, 6), _random.Next(2, 6)));
+                group.AddStudent(new Student(names[_random.Next(0, names.Length)], _random.Next(2, 6),
+                    _random.Next(2, 6), _random.Next(2, 6)));
             }
 
             group.DeleteStudentsWithMark(2);
@@ -85,15 +97,18 @@ namespace Number2
 
     public struct Group
     {
-        private static int idContainer = 0;
+        private static int _idContainer = 0;
         public int Id { get; private set; }
 
         public List<Student> Students { get; private set; }
 
-        public Group() : this(new List<Student>()) {}
+        public Group() : this(new List<Student>())
+        {
+        }
+
         public Group(List<Student> students)
         {
-            Id = idContainer++;
+            Id = _idContainer++;
             Students = students;
         }
 
@@ -101,7 +116,7 @@ namespace Number2
         {
             Students.Add(student);
         }
-        
+
         public void DeleteStudentsWithMark(int mark)
         {
             for (int i = 0; i < Students.Count; i++)
@@ -113,7 +128,7 @@ namespace Number2
                 }
             }
         }
-        
+
         public void PrintStudents()
         {
             foreach (var student in Students)
@@ -121,11 +136,10 @@ namespace Number2
                 Console.WriteLine($"Фамилия: {student.Name}; \tСредняя оценка: {student.Average}");
             }
         }
-        
+
         public void SortStudentsByAverage()
         {
             Students.Sort((x, y) => y.Average.CompareTo(x.Average));
         }
-
     }
 }

@@ -7,12 +7,13 @@
         <ProjectGuid>{DCE1CC34-C104-4FC6-A57B-B23FB6998D0C}</ProjectGuid>
         <OutputType>Exe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>Number2</RootNamespace>
-        <AssemblyName>Number2</AssemblyName>
-        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <RootNamespace>Level2</RootNamespace>
+        <AssemblyName>Level2</AssemblyName>
+        <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
