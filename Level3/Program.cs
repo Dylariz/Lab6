@@ -9,7 +9,7 @@ namespace Level3
     {
         public static void Main(string[] args)
         {
-            Number4.Program.Start();
+            Number1.Program.Start();
         }
     }
 }
@@ -33,21 +33,22 @@ namespace Number1
             Thread.Sleep(50);
             groups.Add(Group.GenerateGroup(8, 5, (0, 10)));
 
+            for (var index = 0; index < groups.Count; index++)
+            {
+                groups[index] = groups[index].DeleteStudentsWithMarkAndLower(2);
+                groups[index] = groups[index].UpdateAvaregeMark();
+                groups[index].SortStudentsByAverage();
+                groups[index].PrintStudents();
+            }
 
+            Console.WriteLine();
+            
             groups.Sort((x, y) => y.AverageMark.CompareTo(x.AverageMark));
 
             Console.WriteLine("Group\tAverage mark");
             foreach (var group in groups)
             {
-                group.DeleteStudentsWithMarkAndLower(2);
                 Console.WriteLine($"{group.Id}\t{group.AverageMark:F1}");
-            }
-
-            Console.WriteLine();
-            foreach (var group in groups)
-            {
-                group.SortStudentsByAverage();
-                group.PrintStudents();
             }
         }
     }
@@ -58,22 +59,21 @@ namespace Number1
 
         public int Id { get; private set; }
         public int[] Marks { get; private set; }
-
-        public double AverageMark
-        {
-            get
-            {
-                double sum = 0;
-                foreach (var mark in Marks)
-                    sum += mark;
-                return sum / Marks.Length;
-            }
-        }
+        public double AverageMark {get; private set;}
 
         public Student(int[] marks)
         {
             Id = _idContainer++;
             Marks = marks;
+        }
+
+        public Student UpdateAvarageMark()
+        {
+            double sum = 0;
+            foreach (var mark in Marks)
+                sum += mark;
+            AverageMark = sum / Marks.Length;
+            return this;
         }
     }
 
@@ -82,33 +82,28 @@ namespace Number1
         private static int _idContainer = 0;
         public int Id { get; private set; }
         public List<Student> Students { get; private set; }
+        public double AverageMark { get; private set; }
 
         public Group(List<Student> students)
         {
             Id = _idContainer++;
             Students = students;
         }
-
-        public double AverageMark
+        
+        public Group UpdateAvaregeMark()
         {
-            get
+            double sum = 0;
+            for (var index = 0; index < Students.Count; index++)
             {
-                double sum = 0;
-                foreach (var student in Students)
-                    sum += student.AverageMark;
-                return sum / Students.Count;
+                Students[index] = Students[index].UpdateAvarageMark();
+                sum += Students[index].AverageMark;
             }
+
+            AverageMark = sum / Students.Count;
+            return this;
         }
 
-        public static Group GenerateGroup(int countOfStudents, int countOfMarks, (int, int) marksRange)
-        {
-            List<Student> students = new List<Student>();
-            for (int i = 0; i < countOfStudents; i++)
-                students.Add(new Student(SupportMethods.GenerateArray(countOfMarks, marksRange)));
-            return new Group(students);
-        }
-
-        public void DeleteStudentsWithMarkAndLower(int mark)
+        public Group DeleteStudentsWithMarkAndLower(int mark)
         {
             for (int i = 0; i < Students.Count; i++)
             {
@@ -118,6 +113,7 @@ namespace Number1
                     i--;
                 }
             }
+            return this;
         }
 
         public void PrintStudents()
@@ -134,6 +130,14 @@ namespace Number1
         public void SortStudentsByAverage()
         {
             Students.Sort((x, y) => y.AverageMark.CompareTo(x.AverageMark));
+        }
+        
+        public static Group GenerateGroup(int countOfStudents, int countOfMarks, (int, int) marksRange)
+        {
+            List<Student> students = new List<Student>();
+            for (int i = 0; i < countOfStudents; i++)
+                students.Add(new Student(SupportMethods.GenerateArray(countOfMarks, marksRange)));
+            return new Group(students);
         }
     }
 
