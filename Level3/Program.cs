@@ -41,7 +41,7 @@ namespace Number1
             }
 
             Console.WriteLine();
-            
+
             groups.Sort((x, y) => y.AverageMark.CompareTo(x.AverageMark));
 
             Console.WriteLine("Group\tAverage mark");
@@ -58,7 +58,7 @@ namespace Number1
 
         public int Id { get; private set; }
         public int[] Marks { get; private set; }
-        public double AverageMark {get; private set;}
+        public double AverageMark { get; private set; }
 
         public Student(int[] marks)
         {
@@ -84,7 +84,7 @@ namespace Number1
             Students = students;
 
             DeleteStudentsWithMarkAndLower(2);
-            
+
             double sum = Students.Sum(t => t.AverageMark);
 
             AverageMark = sum / Students.Count;
@@ -100,7 +100,6 @@ namespace Number1
                     i--;
                 }
             }
-            
         }
 
         public void PrintStudents()
@@ -118,7 +117,7 @@ namespace Number1
         {
             Students.Sort((x, y) => y.AverageMark.CompareTo(x.AverageMark));
         }
-        
+
         public static Group GenerateGroup(int countOfStudents, int countOfMarks, (int, int) marksRange)
         {
             List<Student> students = new List<Student>();
@@ -228,7 +227,7 @@ namespace Number4
 
             return new Group(participants);
         }
-        
+
         public static Group MergeGroupsByResults(Group group1, Group group2)
         {
             var participants = new List<Participant>();
@@ -287,31 +286,54 @@ namespace Number6
         public static void Start()
         {
             var reader = new StreamReader("Answers_N6.txt");
-            var answers = new List<Answer>();
-            
-            var questionCounter = 0;
+            var questionCounter = 1;
+
             while (!reader.EndOfStream)
             {
+                var answers = new List<Answer>();
                 var currentAnswers = reader.ReadLine().Split(';');
                 foreach (var ans in currentAnswers)
                 {
-                    if (ans == "") 
+                    if (ans == "")
                     {
                         continue;
                     }
-                    var index = answers.Select(x => x.Text).ToList().BinarySearch(ans);
+
+                    var index = answers.Select(x => x.Text).ToList().IndexOf(ans);
                     if (index >= 0)
                     {
                         var answer = answers[index];
                         answers.RemoveAt(index);
                         answer.Count++;
-                        answers.Add(answer);
+                        int t = answers.FindIndex(x => x.Count > answer.Count);
+                        if (t < 0)
+                        {
+                            t = answers.Count;
+                        }
+
+                        answers.Insert(t, answer);
                     }
                     else
                     {
-                        answers.Add(new Answer(ans));
+                        answers.Insert(0, new Answer(ans));
                     }
                 }
+
+                Console.WriteLine($"Question #{questionCounter}");
+                for (var i = 0; i < 5; i++)
+                {
+                    if (i >= answers.Count)
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine(
+                        $"{i + 1} place: {answers[answers.Count - i - 1].Text} — {answers[answers.Count - i - 1].Count} times," +
+                        $" {answers[answers.Count - i - 1].Count * 100 / currentAnswers.Length}%");
+                }
+
+                Console.WriteLine();
+
                 questionCounter++;
             }
         }
