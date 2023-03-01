@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -9,7 +10,7 @@ namespace Level3
     {
         public static void Main(string[] args)
         {
-            Number1.Program.Start();
+            Number6.Program.Start();
         }
     }
 }
@@ -231,25 +232,27 @@ namespace Number4
         public static Group MergeGroupsByResults(Group group1, Group group2)
         {
             var participants = new List<Participant>();
-            for (int i = 0; i < Math.Max(group1.Participants.Count, group2.Participants.Count); i++)
+            while (group1.Participants.Count > 0 || group2.Participants.Count > 0)
             {
-                if (i >= group1.Participants.Count)
+                if (group1.Participants.Count == 0)
                 {
-                    participants.Add(group2.Participants[i]);
+                    participants.Add(group2.Participants[0]);
+                    group2.Participants.RemoveAt(0);
                 }
-                else if (i >= group2.Participants.Count)
+                else if (group2.Participants.Count == 0)
                 {
-                    participants.Add(group1.Participants[i]);
+                    participants.Add(group1.Participants[0]);
+                    group1.Participants.RemoveAt(0);
                 }
-                else if (group1.Participants[i].Result > group2.Participants[i].Result)
+                else if (group1.Participants[0].Result > group2.Participants[0].Result)
                 {
-                    participants.Add(group1.Participants[i]);
-                    participants.Add(group2.Participants[i]);
+                    participants.Add(group1.Participants[0]);
+                    group1.Participants.RemoveAt(0);
                 }
                 else
                 {
-                    participants.Add(group2.Participants[i]);
-                    participants.Add(group1.Participants[i]);
+                    participants.Add(group2.Participants[0]);
+                    group2.Participants.RemoveAt(0);
                 }
             }
 
@@ -283,6 +286,46 @@ namespace Number6
     {
         public static void Start()
         {
+            var reader = new StreamReader("Answers_N6.txt");
+            var answers = new List<Answer>();
+            
+            var questionCounter = 0;
+            while (!reader.EndOfStream)
+            {
+                var currentAnswers = reader.ReadLine().Split(';');
+                foreach (var ans in currentAnswers)
+                {
+                    if (ans == "") 
+                    {
+                        continue;
+                    }
+                    var index = answers.Select(x => x.Text).ToList().BinarySearch(ans);
+                    if (index >= 0)
+                    {
+                        var answer = answers[index];
+                        answers.RemoveAt(index);
+                        answer.Count++;
+                        answers.Add(answer);
+                    }
+                    else
+                    {
+                        answers.Add(new Answer(ans));
+                    }
+                }
+                questionCounter++;
+            }
+        }
+    }
+
+    public struct Answer
+    {
+        public string Text { get; private set; }
+        public int Count { get; set; }
+
+        public Answer(string text)
+        {
+            Text = text;
+            Count = 1;
         }
     }
 }
