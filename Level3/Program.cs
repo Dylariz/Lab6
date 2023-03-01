@@ -35,8 +35,6 @@ namespace Number1
 
             for (var index = 0; index < groups.Count; index++)
             {
-                groups[index] = groups[index].DeleteStudentsWithMarkAndLower(2);
-                groups[index] = groups[index].UpdateAvaregeMark();
                 groups[index].SortStudentsByAverage();
                 groups[index].PrintStudents();
             }
@@ -65,15 +63,10 @@ namespace Number1
         {
             Id = _idContainer++;
             Marks = marks;
-        }
-
-        public Student UpdateAvarageMark()
-        {
             double sum = 0;
             foreach (var mark in Marks)
                 sum += mark;
             AverageMark = sum / Marks.Length;
-            return this;
         }
     }
 
@@ -88,22 +81,15 @@ namespace Number1
         {
             Id = _idContainer++;
             Students = students;
-        }
-        
-        public Group UpdateAvaregeMark()
-        {
-            double sum = 0;
-            for (var index = 0; index < Students.Count; index++)
-            {
-                Students[index] = Students[index].UpdateAvarageMark();
-                sum += Students[index].AverageMark;
-            }
+
+            DeleteStudentsWithMarkAndLower(2);
+            
+            double sum = Students.Sum(t => t.AverageMark);
 
             AverageMark = sum / Students.Count;
-            return this;
         }
 
-        public Group DeleteStudentsWithMarkAndLower(int mark)
+        public void DeleteStudentsWithMarkAndLower(int mark)
         {
             for (int i = 0; i < Students.Count; i++)
             {
@@ -113,7 +99,7 @@ namespace Number1
                     i--;
                 }
             }
-            return this;
+            
         }
 
         public void PrintStudents()
