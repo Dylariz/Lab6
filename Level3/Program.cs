@@ -302,21 +302,29 @@ namespace Number6
                     var index = answers.Select(x => x.Text).ToList().IndexOf(ans);
                     if (index >= 0)
                     {
-                        var answer = answers[index];
-                        answers.RemoveAt(index);
-                        answer.Count++;
-                        int t = answers.FindIndex(x => x.Count > answer.Count);
-                        if (t < 0)
-                        {
-                            t = answers.Count;
-                        }
-
-                        answers.Insert(t, answer);
+                        answers[index].Count++;
                     }
                     else
                     {
-                        answers.Insert(0, new Answer(ans));
+                        answers.Add(new Answer(ans));
                     }
+                }
+
+                for (int i = 0; i < (answers.Count > 5 ? 5 : answers.Count); i++)
+                {
+                    var amax = answers[i];
+                    int imax = i;
+                    for (int j = i + 1; j < answers.Count - 1; j++)
+                    {
+                        if (answers[j].Count > amax.Count)
+                        {
+                            amax = answers[j];
+                            imax = j;
+                        }
+                    }
+
+                    answers[imax] = answers[i];
+                    answers[i] = amax;
                 }
 
                 Console.WriteLine($"Question #{questionCounter}");
@@ -328,8 +336,8 @@ namespace Number6
                     }
 
                     Console.WriteLine(
-                        $"{i + 1} place: {answers[answers.Count - i - 1].Text} — {answers[answers.Count - i - 1].Count} times," +
-                        $" {answers[answers.Count - i - 1].Count * 100 / currentAnswers.Length}%");
+                        $"{i + 1} place: {answers[i].Text} — {answers[i].Count} times," +
+                        $" {answers[i].Count * 100 / currentAnswers.Length}%");
                 }
 
                 Console.WriteLine();
@@ -339,7 +347,7 @@ namespace Number6
         }
     }
 
-    public struct Answer
+    public class Answer
     {
         public string Text { get; private set; }
         public int Count { get; set; }
